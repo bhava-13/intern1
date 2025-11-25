@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "name": "Dr. Mira Sen",
+    "specialization": "Cardiology",
+    "experience": 12,
+    "fees": 800,
+    "slots": ["09:00","10:00","11:00","14:00"]
+  },
+  {
+    "id": "2",
+    "name": "Dr. Rajiv Kumar",
+    "specialization": "Dermatology",
+    "experience": 8,
+    "fees": 500,
+    "slots": ["10:30","12:00","15:00"]
+  }
+]
