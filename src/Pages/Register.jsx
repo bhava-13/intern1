@@ -1,12 +1,11 @@
-
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 
 export default function Register() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginUser, isAuthenticated } = useContext(AuthContext);
+  const { registerUser, loginUser, isAuthenticated } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     name: "",
@@ -19,6 +18,13 @@ export default function Register() {
   const [error, setError] = useState("");
 
   const from = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    // safe redirect after render if already authenticated
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -45,32 +51,32 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      // FRONTEND-ONLY: create user locally and log them in.
-      // If you add a backend later, replace this block with an API call to register.
-      await Promise.resolve(); // placeholder for async flow / API call
+      // placeholder for async registration flow
+      // if you later add backend, call registerUser API here:
+      if (typeof registerUser === "function") {
+        await registerUser({ name: form.name, email: form.email, password: form.password });
+      } else {
+        // frontend-only mock flow (no-op)
+        await Promise.resolve();
+      }
 
-      // Use loginUser to set user in context (this saves user to localStorage via AuthContext/storage)
-      loginUser(form.email, form.password); // AuthContext creates a mock user currently
+      // Log user in via context (await in case it's async)
+      if (typeof loginUser === "function") {
+        await loginUser(form.email, form.password);
+      }
 
-      // Optionally, if you want to store name in user object, you can extend AuthContext's loginUser later.
-      // For now, we navigate after login:
+      // navigate after successful register+login
       navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
-      setError("Registration failed. Try again.");
+      setError(err?.message || "Registration failed. Try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // If already authenticated, redirect away from register
-  if (isAuthenticated) {
-    navigate(from, { replace: true });
-    return null;
-  }
-
   return (
-    <div className="container mt-5" style={{ maxWidth: 560 }}>
+    <div className="container mt-5" style={{ maxWidth: "560px" }}>
       <h2 className="mb-4 text-center">Register</h2>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}
