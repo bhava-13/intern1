@@ -12,31 +12,37 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const from = location.state?.from?.pathname || "/";
-
+ useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
  
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSubmitting(true);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSubmitting(true);
+  try {
+    await loginUser(form.email, form.password);
+    navigate(from, { replace: true });
+  } catch (err) {
+    console.error("Login failed:", err);
+    const msg =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err?.message ||
+      "Login failed. Please try again.";
+    setError(msg);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
-    try {
-      // assume loginUser returns a Promise that resolves on success / rejects on failure
-      await loginUser(form.email, form.password);
-
-      // after successful login, navigate
-      navigate(from, { replace: true });
-    } catch (err) {
-      console.error(err);
-      setError("Login failed. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="container mt-5" style={{ maxWidth: "480px" }}>

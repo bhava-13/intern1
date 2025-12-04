@@ -1,16 +1,7 @@
-/**
- * src/utils/storage.jsx
- *
- * Helpers for storing/loading app data in localStorage.
- * Includes a small React hook `useLocalStorage` for convenience.
- *
- * Usage:
- *  import { saveUser, loadUser, saveAppointments, loadAppointments, useLocalStorage } from '../utils/storage';
- */
 
 import { useState, useEffect } from "react";
 
-/* ---- Raw helpers ---- */
+
 export const saveUser = (user) => {
   try {
     localStorage.setItem("user", JSON.stringify(user ?? null));
@@ -63,12 +54,7 @@ export const clearAppointments = () => {
   }
 };
 
-/* ---- Convenience hook ---- */
-/**
- * useLocalStorage - small hook for keeping local state in sync with localStorage.
- *
- * const [value, setValue] = useLocalStorage('key', initialValue);
- */
+
 export function useLocalStorage(key, initialValue) {
   const [state, setState] = useState(() => {
     try {

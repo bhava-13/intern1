@@ -1,11 +1,10 @@
-import { useState, useContext, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 
 export default function Register() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { registerUser, loginUser, isAuthenticated } = useContext(AuthContext);
+  const { registerUser } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     name: "",
@@ -17,17 +16,8 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const from = location.state?.from?.pathname || "/";
-
-  useEffect(() => {
-    // safe redirect after render if already authenticated
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
-    }
-  }, [isAuthenticated, navigate, from]);
-
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const validate = () => {
@@ -42,6 +32,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     const validationError = validate();
     if (validationError) {
       setError(validationError);
@@ -51,25 +42,20 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      // placeholder for async registration flow
-      // if you later add backend, call registerUser API here:
-      if (typeof registerUser === "function") {
-        await registerUser({ name: form.name, email: form.email, password: form.password });
-      } else {
-        // frontend-only mock flow (no-op)
-        await Promise.resolve();
-      }
+      // ⭐ CORRECT backend call
+      await registerUser(form.name, form.email, form.password);
 
-      // Log user in via context (await in case it's async)
-      if (typeof loginUser === "function") {
-        await loginUser(form.email, form.password);
-      }
-
-      // navigate after successful register+login
-      navigate(from, { replace: true });
+      // redirect to login after successful registration
+      navigate("/login");
     } catch (err) {
-      console.error(err);
-      setError(err?.message || "Registration failed. Try again.");
+      console.error("REGISTER ERROR:", err);
+
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Registration failed.";
+
+      setError(msg);
     } finally {
       setSubmitting(false);
     }

@@ -1,55 +1,73 @@
-import React from "react";
-import { createContext, useState, useEffect } from "react";
-import { loadUser, saveUser, clearUser } from "../utils/storage";
+import React, { createContext, useState, useEffect } from "react";
+import api from "../api/axios";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);     // stores logged-in user
-  const [loading, setLoading] = useState(true); // true while checking localStorage
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // Load user from localStorage on app start
   useEffect(() => {
-    const existingUser = loadUser();
-    if (existingUser) {
-      setUser(existingUser);
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (token && storedUser) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(storedUser));
     }
-    setLoading(false);
+
+    setInitialLoading(false);
   }, []);
 
-  // --- LOGIN ---
-  const loginUser = (email, password) => {
-    // MOCK AUTH since no backend
-    const loggedUser = {
-      name: "User",
+
+  const loginUser = async (email, password) => {
+    const res = await api.post("/api/auth/login", {
       email,
-    };
+      password,
+    });
 
-    // save to storage
-    saveUser(loggedUser);
-    setUser(loggedUser);
+    console.log("Login response:", res.data);
+
+
+    const token = res.data.token;
+    const loggedInUser = res.data.user;
+
+    if (!token) throw new Error("Token missing from server response");
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(loggedInUser));
+
+    setUser(loggedInUser);
+    setIsAuthenticated(true);
   };
 
-  // --- LOGOUT ---
-  const logoutUser = () => {
-    clearUser();
-    setUser(null);
-  };
-
-  // computed value
-  const isAuthenticated = !!user;
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        isAuthenticated,
-        loginUser,
-        logoutUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const registerUser = async (name, email, password) => {
+  return await api.post("/api/auth/register", {
+    name,
+    email,
+    password,
+  });
 };
+
+
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
+  const value = {
+    user,
+    isAuthenticated,
+    loginUser,
+    logoutUser,
+    setUser,
+  };
+
+  if (initialLoading) return <p>Loading...</p>;
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
