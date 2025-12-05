@@ -8,7 +8,7 @@ function Navbar() {
     <>
       <nav
         className="navbar navbar-expand-lg"
-        style={{ backgroundColor: "#D34E4E" }}
+        style={{ backgroundColor: "#5F9EA0" }}
       >
         <div className="container-fluid">
           <Link className="navbar-brand text-light" to="/">
@@ -44,7 +44,7 @@ function Navbar() {
                 Profile
               </Link>
 
-              <Link className="nav-link" to="/login">
+              <Link className="nav-link" to="/land">
                 <button type="button" className="btn btn-outline-light">
                 <i className="bi bi-box-arrow-right"></i> Log out
               </button>

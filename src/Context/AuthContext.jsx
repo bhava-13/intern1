@@ -8,51 +8,47 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
-    if (token && storedUser) {
-      setIsAuthenticated(true);
+    if (storedUser) {
       setUser(JSON.parse(storedUser));
+      setIsAuthenticated(true);
     }
 
     setInitialLoading(false);
   }, []);
 
-
+  // LOGIN USER
   const loginUser = async (email, password) => {
     const res = await api.post("/api/auth/login", {
       email,
       password,
     });
 
-    console.log("Login response:", res.data);
-
-
-    const token = res.data.token;
     const loggedInUser = res.data.user;
 
-    if (!token) throw new Error("Token missing from server response");
-
-    localStorage.setItem("token", token);
+ 
     localStorage.setItem("user", JSON.stringify(loggedInUser));
 
     setUser(loggedInUser);
     setIsAuthenticated(true);
+
+    return loggedInUser; 
   };
 
+  // REGISTER USER
   const registerUser = async (name, email, password) => {
-  return await api.post("/api/auth/register", {
-    name,
-    email,
-    password,
-  });
-};
+    return await api.post("/api/auth/register", {
+      name,
+      email,
+      password,
+    });
+  };
 
-
+  // LOGOUT USER
   const logoutUser = () => {
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
     setIsAuthenticated(false);
@@ -63,11 +59,14 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     loginUser,
     logoutUser,
-    setUser,
+    registerUser,
   };
 
-  if (initialLoading) return <p>Loading...</p>;
+  if (initialLoading) return <p>Loading</p>;
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
-

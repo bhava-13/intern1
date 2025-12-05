@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import doctorsData from "../data/doctors.json";
 
+
 const palette = {
   dark: "#001F3F",
   mid: "#3A6D8C",
@@ -41,7 +42,7 @@ export default function DoctorDetails() {
     >
       <div className="container py-5">
         <Link to="/doctors" className="btn btn-sm btn-outline-light mb-3">
-          ⬅ 
+          Go Back 
         </Link>
 
         {notFound ? (

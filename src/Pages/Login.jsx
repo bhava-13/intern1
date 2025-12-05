@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,37 +13,46 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const from = location.state?.from?.pathname || "/";
- useEffect(() => {
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
-    }
-  }, [isAuthenticated, navigate, from]);
- 
+
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setSubmitting(true);
 
-  try {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email: form.email,
+          password: form.password,
+        }
+      );
+
+      console.log("login successful",response.data);
+
+   
     await loginUser(form.email, form.password);
-    navigate(from, { replace: true });
-  } catch (err) {
-    console.error("Login failed:", err);
-    const msg =
-      err?.response?.data?.message ||
-      err?.response?.data?.error ||
-      err?.message ||
-      "Login failed. Please try again.";
-    setError(msg);
-  } finally {
-    setSubmitting(false);
-  }
-};
 
+
+   
+    navigate("/", { replace: true });
+    } catch (err) {
+      console.error("Login failed:", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Login failed. Please try again.";
+      setError(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="container mt-5" style={{ maxWidth: "480px" }}>
@@ -77,8 +87,12 @@ const handleSubmit = async (e) => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
-          {submitting ? "Logging in..." : "Login"}
+        <button
+          type="submit"
+          className="btn btn-primary w-100"
+          disabled={submitting}
+        >
+          {submitting ? "Logging in" : "Login"}
         </button>
       </form>
 

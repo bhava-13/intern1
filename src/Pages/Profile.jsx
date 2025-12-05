@@ -21,7 +21,7 @@ function Profile() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
-  // 1) Load profile from backend
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -34,7 +34,6 @@ function Profile() {
         setFormData({
           name: data.name || "",
           email: data.email || "",
-          phone: data.phone || "",
         });
       } catch (err) {
         console.error("Load profile error:", err);
@@ -51,7 +50,7 @@ function Profile() {
     fetchProfile();
   }, []);
 
-  // 2) Handle input
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -61,7 +60,7 @@ function Profile() {
     }));
   };
 
-  // 3) Save profile to backend
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -78,13 +77,13 @@ function Profile() {
         phone: updated.phone || "",
       });
 
-      setSuccess("Profile updated successfully ✨");
+      setSuccess("Profile updated successfully");
     } catch (err) {
       console.error("Update profile error:", err);
       const msg =
         err?.response?.data?.message ||
         err?.response?.data?.error ||
-        "Failed to update profile.";
+        "Failed to update";
       setError(msg);
     } finally {
       setSaving(false);
@@ -163,24 +162,6 @@ function Profile() {
                           onChange={handleChange}
                           style={{ borderColor: palette.mid }}
                           required
-                        />
-                      </div>
-
-                      {/* PHONE */}
-                      <div className="mb-3">
-                        <label
-                          className="form-label"
-                          style={{ color: palette.dark }}
-                        >
-                          Phone
-                        </label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          className="form-control"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          style={{ borderColor: palette.mid }}
                         />
                       </div>
 

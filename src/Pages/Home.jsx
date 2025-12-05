@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 
 const palette = {
-  dark: "#001F3F",
-  mid: "#3A6D8C",
-  light: "#6A9AB0",
-  accent: "#EAD8B1",
+  dark: "#0E4D64",        // Deep Teal
+  mid: "#1D8A99",         // Medium Calm Teal
+  light: "#70C1B3",       // Soft Mint
+  accent: "#F7FFF7",      // Soft White Green
+  neutral: "#DDECEC", 
+  cute:"#F5EFE6",
 };
 
 function Home() {
@@ -19,7 +21,7 @@ function Home() {
       <Navbar />
       <div
         style={{
-          background: `linear-gradient(180deg, ${palette.dark}, #071730)`,
+          background: `linear-gradient(180deg, ${palette.dark}, ${palette.mid})`,
           minHeight: "100vh",
           color: palette.accent,
         }}
@@ -37,9 +39,14 @@ function Home() {
               >
                 Verified specialists. Fast scheduling. Assurance delivered.
               </h1>
+              
+
               <p
                 className="lead mt-3"
-                style={{ color: "#cbdbe6", maxWidth: 640 }}
+                style={{
+                  color: palette.neutral,
+                  maxWidth: 640,
+                }}
               >
                 Seamless booking, personalized doctor profiles, and appointment
                 reminders. Find available slots, confirm in seconds, and keep
@@ -49,15 +56,28 @@ function Home() {
               <div className="d-flex gap-3 mt-4 flex-wrap">
                 <Link
                   to="/doctors"
-                  className="btn btn-light text-danger-emphasis"
-                  style={{ padding: "10px 22px", borderRadius: 10 }}
+                  className="btn"
+                  style={{
+                    padding: "10px 22px",
+                    borderRadius: 10,
+                    backgroundColor: palette.accent,
+                    color: palette.dark,
+                    border: "none",
+                  }}
                 >
                   View Doctors
                 </Link>
+
                 <Link
                   to="/book"
-                  className="btn btn-light text-danger-emphasis"
-                  style={{ padding: "10px 22px", borderRadius: 10 }}
+                  className="btn"
+                  style={{
+                    padding: "10px 22px",
+                    borderRadius: 10,
+                    backgroundColor: palette.accent,
+                    color: palette.dark,
+                    border: "none",
+                  }}
                 >
                   Book Appointment
                 </Link>
@@ -75,32 +95,35 @@ function Home() {
             <FeatureCard
               title="Easy Booking"
               desc="Pick a date & slot, confirm in one click, get reminder."
-              icon="🗓️"
+              icon={<i className="bi bi-calendar-check text-dark"></i>}
               palette={palette}
+              index={1}
             />
             <FeatureCard
               title="Verified Doctors"
               desc="Profiles with specialization, experience and fees."
-              icon="🩺"
+              icon={<i className="bi bi-heart-pulse text-dark"></i>}
               palette={palette}
+              index={1}
             />
             <FeatureCard
               title="Manage Your Appointments"
-              desc="View, reschedule or cancel from your profile."
-              icon="🔁"
+              desc="View, reschedule or cancel your appointments from your profile."
+              icon={<i className="bi bi-pencil-square text-dark"></i>}
               palette={palette}
+              index={1}
             />
           </div>
         </section>
 
         <footer
           style={{
-            background: `linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.28))`,
+            background: `linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25))`,
           }}
           className="py-4"
         >
           <div className="container d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
-            <div style={{ color: "#cde3ee" }}>
+            <div style={{ color: palette.neutral }}>
               <strong>Ready to book?</strong> — Choose a doctor and secure a
               slot instantly.
             </div>
@@ -108,15 +131,27 @@ function Home() {
             <div className="d-flex gap-2">
               <Link
                 to="/book"
-                className="btn btn-light text-danger-emphasis"
-                style={{ padding: "10px 22px", borderRadius: 10 }}
+                className="btn"
+                style={{
+                  padding: "10px 22px",
+                  borderRadius: 10,
+                  backgroundColor: palette.accent,
+                  color: palette.dark,
+                  border: "none",
+                }}
               >
                 View Doctors
               </Link>
+
               <Link
                 to="/doctors"
-                className="btn btn-light text-danger-emphasis"
-                style={{ borderRadius: 8 }}
+                className="btn"
+                style={{
+                  borderRadius: 8,
+                  backgroundColor: palette.accent,
+                  color: palette.dark,
+                  border: "none",
+                }}
               >
                 Book Appointment
               </Link>
@@ -128,23 +163,42 @@ function Home() {
   );
 }
 
-function FeatureCard({ title, desc, icon, palette }) {
+function FeatureCard({ title, desc, icon, palette, index }) {
+  
+  const cardColors = [
+    palette.accent,  // #F7FFF7
+    palette.neutral, // #DDECEC
+    
+  ];
+
+  const bg = cardColors[index]; // choose based on card position
+  const textColor = palette.dark; // deep teal for readability
+
   return (
     <div className="col-md-4 mb-3">
       <div
         style={{
-          background: "rgba(255,255,255,0.03)",
-          border: `1px solid rgba(255,255,255,0.05)`,
+          background: bg,
+          border: "none",
           padding: 18,
           borderRadius: 12,
           minHeight: 120,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
         }}
       >
-        <div style={{ fontSize: 28 }}>{icon}</div>
-        <h5 style={{ color: palette.light, marginTop: 8 }}>{title}</h5>
-        <p style={{ color: "#c6dde8" }}>{desc}</p>
+        <div style={{ fontSize: 36}}>{icon}</div>
+
+        <h5 style={{ color: textColor, marginTop: 8 }}>
+          {title}
+        </h5>
+
+        <p style={{ color: textColor, opacity: 0.8 }}>
+          {desc}
+        </p>
       </div>
     </div>
   );
 }
+
+
 export default Home;

@@ -1,6 +1,8 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
+import { useEffect } from "react";
+import axios from "axios";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -24,8 +26,10 @@ export default function Register() {
     if (!form.name.trim()) return "Name is required.";
     if (!form.email.trim()) return "Email is required.";
     if (!/\S+@\S+\.\S+/.test(form.email)) return "Enter a valid email.";
-    if (form.password.length < 6) return "Password must be at least 6 characters.";
-    if (form.password !== form.confirmPassword) return "Passwords do not match.";
+    if (form.password.length < 6)
+      return "Password must be at least 6 characters.";
+    if (form.password !== form.confirmPassword)
+      return "Passwords do not match.";
     return null;
   };
 
@@ -42,10 +46,17 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      // ⭐ CORRECT backend call
-      await registerUser(form.name, form.email, form.password);
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          name: form.name,
+          email:form.email,
+          password: form.password,
+        }
+      );
 
-      // redirect to login after successful registration
+      
+
       navigate("/login");
     } catch (err) {
       console.error("REGISTER ERROR:", err);
@@ -119,7 +130,11 @@ export default function Register() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100" disabled={submitting}>
+        <button
+          type="submit"
+          className="btn btn-primary w-100"
+          disabled={submitting}
+        >
           {submitting ? "Creating account..." : "Create account"}
         </button>
       </form>
