@@ -2,30 +2,30 @@ import React, { useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import doctorsData from "../data/doctors.json";
 
-
 const palette = {
-  dark: "#001F3F",
+  dark: "#0E4D64",
   mid: "#3A6D8C",
   light: "#6A9AB0",
-  accent: "#EAD8B1",
+  accent: "#fefefeff",
 };
 
 export default function DoctorDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
- 
   const doctor = useMemo(
-    () => doctorsData.find((d) => d.id === id),
+    () => doctorsData.find((d) => String(d.id) === String(id)),
     [id]
   );
 
   const handleBook = () => {
     if (!doctor) return;
+
     navigate("/book", {
       state: {
         doctorId: doctor.id,
         doctorName: doctor.name,
+        slots: doctor.slots,
       },
     });
   };
@@ -35,14 +35,14 @@ export default function DoctorDetails() {
   return (
     <div
       style={{
-        background: `linear-gradient(180deg, ${palette.dark}, #071730)`,
+        backgroundColor: palette.dark,
         minHeight: "100vh",
         color: palette.accent,
       }}
     >
       <div className="container py-5">
-        <Link to="/doctors" className="btn btn-sm btn-outline-light mb-3">
-          Go Back 
+        <Link to="/doctors" className="btn btn-lg mb-4">
+          <i class="bi bi-arrow-left-square text-light h2"></i>
         </Link>
 
         {notFound ? (
@@ -51,14 +51,13 @@ export default function DoctorDetails() {
           </div>
         ) : (
           <div
-  className="d-flex flex-column align-items-center text-center"
-  style={{ width: "100%" }}
->
-  <div style={{ maxWidth: 700 }}>
-
+            className="container py-5 d-flex flex-column align-items-center text-center"
+            style={{ width: "100%", background:palette.dark }}
+          >
+            <div style={{ maxWidth: 700 }}>
               <h2>{doctor.name}</h2>
               <p className="lead" style={{ color: "#cbdbe6" }}>
-                {doctor.specialization}
+                <strong>{doctor.specialization}</strong>
               </p>
 
               <p style={{ color: "#cbdbe6" }}>
@@ -69,12 +68,12 @@ export default function DoctorDetails() {
               </p>
 
               <p style={{ color: "#cbdbe6", maxWidth: 600 }}>
-                Dr. {doctor.name.split(" ").slice(1).join(" ") || doctor.name} is
-                a trusted specialist with a strong track record of patient care,
-                known for clear diagnosis and patient-friendly explanations.
+                Dr. {doctor.name.split(" ").slice(1).join(" ") || doctor.name}{" "}
+                is a trusted specialist with a strong track record of patient
+                care.
               </p>
 
-              <div className="d-flex flex-column align-items-center text-center">
+              <div className="d-flex flex-column align-items-center text-center mt-4">
                 <h5>Available Slots</h5>
                 {doctor.slots && doctor.slots.length > 0 ? (
                   <div className="d-flex justify-center gap-2">
@@ -113,8 +112,6 @@ export default function DoctorDetails() {
                 Book Appointment
               </button>
             </div>
-
-            
           </div>
         )}
       </div>

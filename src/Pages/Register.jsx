@@ -3,6 +3,16 @@ import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import { useEffect } from "react";
 import axios from "axios";
+import React from "react";
+
+const palette = {
+  dark: "#0E4D64",        // Deep Teal
+  mid: "#1D8A99",         // Medium Calm Teal
+  light: "#70C1B3",       // Soft Mint
+  accent: "#F7FFF7",      // Soft White Green
+  neutral: "#DDECEC", 
+  
+};
 
 export default function Register() {
   const navigate = useNavigate();
@@ -73,14 +83,21 @@ export default function Register() {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "560px" }}>
-      <h2 className="mb-4 text-center">Register</h2>
+   <div style={{ 
+    background: `linear-gradient(180deg, ${palette.dark}, ${palette.mid})`, 
+    minHeight: "100vh", 
+    display: "flex", 
+    justifyContent: "center", 
+    alignItems: "center",
+  }}>
+    <div className="container mt-5" style={{ maxWidth: "560px"}}>
+      <h2 className="mb-4 text-center text-light">Register</h2>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Full name</label>
+          <label className="form-label text-light">Full name</label>
           <input
             name="name"
             value={form.name}
@@ -92,7 +109,7 @@ export default function Register() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label text-light">Email</label>
           <input
             name="email"
             type="email"
@@ -105,7 +122,7 @@ export default function Register() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label text-light">Password</label>
           <input
             name="password"
             type="password"
@@ -118,7 +135,7 @@ export default function Register() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Confirm Password</label>
+          <label className="form-label text-light">Confirm Password</label>
           <input
             name="confirmPassword"
             type="password"
@@ -132,16 +149,17 @@ export default function Register() {
 
         <button
           type="submit"
-          className="btn btn-primary w-100"
+          className="btn btn-outline-light w-100"
           disabled={submitting}
         >
           {submitting ? "Creating account..." : "Create account"}
         </button>
       </form>
 
-      <p className="mt-3 text-center">
+      <p className="mt-3 text-center text-light">
         Already have an account? <Link to="/login">Login</Link>
       </p>
+    </div>
     </div>
   );
 }

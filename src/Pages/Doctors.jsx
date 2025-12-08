@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import doctorsData from "../data/doctors.json";
 
 const palette = {
-  dark: "#001F3F",
-  mid: "#3A6D8C",
+  dark: "#0E4D64",
+  mid: "#1D8A99", 
   light: "#6A9AB0",
-  accent: "#EAD8B1",
+  accent: "#F7FFF7",
 };
 
 export default function Doctors() {
@@ -30,7 +30,7 @@ export default function Doctors() {
     <Navbar/>
       <div
         style={{
-          background: `linear-gradient(180deg, ${palette.dark}, #071730)`,
+          background: palette.dark,
           minHeight: "100vh",
           color: palette.accent,
         }}
@@ -39,7 +39,7 @@ export default function Doctors() {
           <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div>
               <h2 className="mb-1">Find a Doctor</h2>
-              <p className="mb-0 text-muted" style={{ color: "#cbdbe6" }}>
+              <p className="mb-0 text-light" style={{ color: "#cbdbe6" }}>
                 Browse verified specialists and view their availability.
               </p>
             </div>
@@ -84,7 +84,7 @@ function DoctorCard({ doctor }) {
       className="card h-100 border border-light"
       style={{
         background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        border: "3px solid rgba(255,255,255,0.08)",
         color: "#f5f5f5",
       }}
     >

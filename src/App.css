@@ -4,6 +4,7 @@ html, body, #root {
   margin: 0; /* Remove default body margin */
   padding: 0; /* Remove default body padding */
 }
+
 .logo {
   height: 6em;
   padding: 1.5em;

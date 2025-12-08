@@ -10,7 +10,7 @@ const palette = {
   light: "#70C1B3",       // Soft Mint
   accent: "#F7FFF7",      // Soft White Green
   neutral: "#DDECEC", 
-  cute:"#F5EFE6",
+  
 };
 
 function Home() {
@@ -108,7 +108,7 @@ function Home() {
             />
             <FeatureCard
               title="Manage Your Appointments"
-              desc="View, reschedule or cancel your appointments from your profile."
+              desc="View, reschedule or cancel from your profile."
               icon={<i className="bi bi-pencil-square text-dark"></i>}
               palette={palette}
               index={1}

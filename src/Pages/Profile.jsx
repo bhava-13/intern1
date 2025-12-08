@@ -3,10 +3,11 @@ import Navbar from "../Components/Navbar.jsx";
 import api from "../api/axios";
 
 const palette = {
-  dark: "#001F3F",
-  mid: "#3A6D8C",
+  dark: "#0E4D64", // Deep Teal
+  mid: "#1D8A99",
   light: "#6A9AB0",
-  accent: "#EAD8B1",
+  accent: "#F7FFF7", // Soft White Green
+  neutral: "#DDECEC",
 };
 
 function Profile() {
@@ -21,7 +22,6 @@ function Profile() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -34,6 +34,7 @@ function Profile() {
         setFormData({
           name: data.name || "",
           email: data.email || "",
+          phone: data.phone || "",
         });
       } catch (err) {
         console.error("Load profile error:", err);
@@ -50,7 +51,6 @@ function Profile() {
     fetchProfile();
   }, []);
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -59,7 +59,6 @@ function Profile() {
       [name]: value,
     }));
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,93 +92,114 @@ function Profile() {
   return (
     <>
       <Navbar />
-
       <div
-        className="container py-4"
-        style={{ backgroundColor: palette.light, minHeight: "100vh" }}
+        style={{
+          background: `linear-gradient(180deg, ${palette.dark}, ${palette.mid})`,
+          minHeight: "100vh",
+        }}
       >
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div
-              className="card shadow"
-              style={{
-                backgroundColor: palette.accent,
-                border: `1px solid ${palette.mid}`,
-              }}
-            >
-              <div className="card-body">
-                <h3
-                  className="text-center mb-3"
-                  style={{ color: palette.dark }}
-                >
-                  My Profile
-                </h3>
+        <div className="container py-4" style={{ minHeight: "100vh" }}>
+          <div className="row justify-content-center">
+            <div className="col-md-6">
+              <div
+                className="card shadow"
+                style={{
+                  backgroundColor: "white",
+                  border: `1px solid ${palette.mid}`,
+                }}
+              >
+                <div className="card-body">
+                  <h3
+                    className="text-center mb-3"
+                    style={{ color: palette.dark }}
+                  >
+                    My Profile
+                  </h3>
 
-                {loading ? (
-                  <p className="text-center mb-0">Loading profile...</p>
-                ) : (
-                  <>
-                    {error && (
-                      <div className="alert alert-danger py-2">{error}</div>
-                    )}
-                    {success && (
-                      <div className="alert alert-success py-2">{success}</div>
-                    )}
+                  {loading ? (
+                    <p className="text-center mb-0">Loading profile</p>
+                  ) : (
+                    <>
+                      {error && (
+                        <div className="alert alert-danger py-2">{error}</div>
+                      )}
+                      {success && (
+                        <div className="alert alert-success py-2">
+                          {success}
+                        </div>
+                      )}
 
-                    <form onSubmit={handleSubmit}>
-                      {/* NAME */}
-                      <div className="mb-3">
-                        <label
-                          className="form-label"
-                          style={{ color: palette.dark }}
+                      <form onSubmit={handleSubmit}>
+                        {/* NAME */}
+                        <div className="mb-3">
+                          <label
+                            className="form-label"
+                            style={{ color: palette.dark }}
+                          >
+                            Name
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            className="form-control"
+                            value={formData.name}
+                            onChange={handleChange}
+                            style={{ borderColor: palette.mid }}
+                            required
+                          />
+                        </div>
+
+                        {/* EMAIL */}
+                        <div className="mb-3">
+                          <label
+                            className="form-label"
+                            style={{ color: palette.dark }}
+                          >
+                            Email
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            className="form-control"
+                            value={formData.email}
+                            onChange={handleChange}
+                            style={{ borderColor: palette.mid }}
+                            required
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label
+                            className="form-label"
+                            style={{ color: palette.dark }}
+                          >
+                            Phone
+                          </label>
+                          <input
+                            type="text"
+                            name="phone"
+                            className="form-control"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            style={{ borderColor: palette.mid }}
+                          />
+                        </div>
+
+                        {/* BUTTON */}
+                        <button
+                          type="submit"
+                          className="btn w-100"
+                          disabled={saving}
+                          style={{
+                            backgroundColor: palette.dark,
+                            color: palette.accent,
+                          }}
                         >
-                          Name
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          className="form-control"
-                          value={formData.name}
-                          onChange={handleChange}
-                          style={{ borderColor: palette.mid }}
-                          required
-                        />
-                      </div>
-
-                      {/* EMAIL */}
-                      <div className="mb-3">
-                        <label
-                          className="form-label"
-                          style={{ color: palette.dark }}
-                        >
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          className="form-control"
-                          value={formData.email}
-                          onChange={handleChange}
-                          style={{ borderColor: palette.mid }}
-                          required
-                        />
-                      </div>
-
-                      {/* BUTTON */}
-                      <button
-                        type="submit"
-                        className="btn w-100"
-                        disabled={saving}
-                        style={{
-                          backgroundColor: palette.dark,
-                          color: palette.accent,
-                        }}
-                      >
-                        {saving ? "Saving..." : "Save Changes"}
-                      </button>
-                    </form>
-                  </>
-                )}
+                          {saving ? "Saving..." : "Save Changes"}
+                        </button>
+                      </form>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
