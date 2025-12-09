@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 function Navbar() {
   return (
@@ -46,8 +46,8 @@ function Navbar() {
 
               <Link className="nav-link" to="/">
                 <button type="button" className="btn btn-outline-light">
-                <i className="bi bi-box-arrow-right"></i> Log out
-              </button>
+                  <i className="bi bi-box-arrow-right"></i> Log out
+                </button>
               </Link>
             </div>
           </div>
