@@ -42,7 +42,7 @@ export default function DoctorDetails() {
     >
       <div className="container py-5">
         <Link to="/doctors" className="btn btn-lg mb-4">
-          <i class="bi bi-arrow-left-square text-light h2"></i>
+          <i className="bi bi-arrow-left-square text-light h2"></i>
         </Link>
 
         {notFound ? (

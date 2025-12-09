@@ -4,10 +4,10 @@ import Navbar from "../Components/Navbar.jsx";
 import axios from "axios";
 
 const palette = {
-  dark: "#0E4D64", // Deep Teal
-  mid: "#1D8A99", // Medium Calm Teal
-  light: "#70C1B3", // Soft Mint
-  accent: "#F7FFF7", // Soft White Green
+  dark: "#0E4D64", 
+  mid: "#1D8A99",
+  light: "#70C1B3", 
+  accent: "#F7FFF7", 
   neutral: "#DDECEC",
 };
 
