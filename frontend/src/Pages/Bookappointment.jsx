@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../Components/Navbar.jsx";
 import axios from "axios";
-
+import { useEffect } from "react";
 const palette = {
   dark: "#0E4D64", // Deep Teal
   mid: "#1D8A99", // Medium Calm Teal
@@ -49,7 +49,7 @@ export default function BookAppointment() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/appointments/book", {
+      const response = await axios.post("https://doctor-appointment-system-backend-2ulw.onrender.com/api/appointments/book", {
         doctorId,
         doctorName,
         date,
@@ -64,6 +64,12 @@ export default function BookAppointment() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+  if (success) {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }
+}, [success]);
+
 
   return (
     <>

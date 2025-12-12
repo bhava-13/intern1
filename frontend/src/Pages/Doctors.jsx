@@ -1,25 +1,45 @@
 import Navbar from "../Components/Navbar";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import doctorsData from "../data/doctors.json";
+import api from "../api/axios";
+import axios from "axios";
 
 const palette = {
   dark: "#0E4D64",
-  mid: "#1D8A99", 
+  mid: "#1D8A99",
   light: "#6A9AB0",
   accent: "#F7FFF7",
 };
 
 export default function Doctors() {
-  const [doctors] = useState(doctorsData);
+  const [doctors, setDoctors] = useState([]);
   const [specialization, setSpecialization] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // GET all doctors from backend
+useEffect(() => {
+  axios
+    .get("https://doctor-appointment-system-backend-2ulw.onrender.com/api/doctors")
+    .then((res) => {
+      console.log(res.data);
+      setDoctors(res.data.doctors);  // <-- FIXED
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error("Error fetching doctors", err);
+      setLoading(false);
+    });
+}, []);
+
+
+  // Extract unique specializations for dropdown
   const specializations = useMemo(() => {
-    const set = new Set();
-    doctors.forEach((d) => set.add(d.specialization));
+    const set = new Set(doctors.map((d) => d.specialization));
     return ["All", ...Array.from(set)];
   }, [doctors]);
 
+  // Filter doctors when specialization changes
   const filteredDoctors = useMemo(() => {
     if (specialization === "All") return doctors;
     return doctors.filter((d) => d.specialization === specialization);
@@ -27,7 +47,7 @@ export default function Doctors() {
 
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <div
         style={{
           background: palette.dark,
@@ -44,6 +64,7 @@ export default function Doctors() {
               </p>
             </div>
 
+            {/* Specialization Filter */}
             <div>
               <label className="form-label me-2 mb-0">Specialization</label>
               <select
@@ -61,13 +82,21 @@ export default function Doctors() {
             </div>
           </div>
 
-          {filteredDoctors.length === 0 && (
+          {/* Loading State */}
+          {loading && <p style={{ color: "#cbdbe6" }}>Loading doctors...</p>}
+
+          {/* Error State */}
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          {/* No doctors */}
+          {!loading && filteredDoctors.length === 0 && (
             <p style={{ color: "#cbdbe6" }}>No doctors found.</p>
           )}
 
+          {/* Doctors Grid */}
           <div className="row">
             {filteredDoctors.map((doctor) => (
-              <div className="col-md-4 mb-4" key={doctor.id}>
+              <div className="col-md-4 mb-4" key={doctor._id}>
                 <DoctorCard doctor={doctor} />
               </div>
             ))}
@@ -106,11 +135,8 @@ function DoctorCard({ doctor }) {
             Slots: {doctor.slots?.slice(0, 2).join(", ")}
             {doctor.slots && doctor.slots.length > 2 ? "..." : ""}
           </span>
-          <Link
-            to={`/doctors/${doctor.id}`}
-            className="btn btn-outline-light"
-            
-          >
+
+          <Link to={`/doctors/${doctor._id}`} className="btn btn-outline-light">
             View Details
           </Link>
         </div>
