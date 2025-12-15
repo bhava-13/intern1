@@ -1,3 +1,6 @@
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "your_super_secret_key"; // later put in .env
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
@@ -6,6 +9,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader)
+    return res.status(401).json({ message: "No token provided" });
+
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err)
+      return res.status(403).json({ message: "Invalid or expired token" });
+
+    req.user = decoded; // user info from token
+    next();
+  });
+};
+
 let appointments = [];
 let appointmentId = 1;
 
@@ -13,7 +33,7 @@ let users = [];
 
 let currentUserEmail = null;
 
-//profile
+//login
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -23,20 +43,21 @@ app.post("/api/auth/login", async (req, res) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(400).json({ message: "Invalid password" });
 
-  currentUserEmail = email;
-  //email chnge motherfu kerrrrrrrrrr
+  // Generate token
+  const token = jwt.sign({ email: user.email, name: user.name }, SECRET_KEY, {
+    expiresIn: "7d",
+  });
+
   return res.json({
     message: "Login successful",
     user: { name: user.name, email: user.email },
+    token,
   });
 });
+//profile
+app.get("/api/user/profile",(req, res) => {
+  const user = users.find((u) => u.email === req.user.email);
 
-app.get("/api/user/profile", (req, res) => {
-  if (!currentUserEmail) {
-    return res.status(401).json({ message: "Not logged in" });
-  }
-
-  const user = users.find((u) => u.email === currentUserEmail);
   if (!user) return res.status(404).json({ message: "User not found" });
 
   res.json({
@@ -46,19 +67,16 @@ app.get("/api/user/profile", (req, res) => {
   });
 });
 
-app.put("/api/user/profile", (req, res) => {
-  if (!currentUserEmail) {
-    return res.status(401).json({ message: "Not logged in" });
-  }
+app.put("/api/user/profile",(req, res) => {
+  const user = users.find((u) => u.email === req.user.email);
 
-  const user = users.find((u) => u.email === currentUserEmail);
   if (!user) return res.status(404).json({ message: "User not found" });
 
   const { name, email, phone } = req.body;
 
   user.name = name || user.name;
   user.email = email || user.email;
-  user.phone = phone || "";
+  user.phone = phone || user.phone;
 
   res.json({
     message: "Profile updated",
@@ -96,7 +114,8 @@ app.post("/api/auth/register", async (req, res) => {
 });
 
 //book appointment
-app.post("/api/appointments/book", (req, res) => {
+
+app.post("/api/appointments/book", verifyToken, (req, res) => {
   const { doctorId, doctorName, date, slot } = req.body;
   if (!date || !slot) {
     return res.status(400).json({ message: "Date and slot are required" });
@@ -104,6 +123,7 @@ app.post("/api/appointments/book", (req, res) => {
 
   const newAppointment = {
     id: appointmentId++,
+    userEmail: req.user.email,
     doctorId,
     doctorName: doctorName || "General",
     date,
@@ -114,7 +134,7 @@ app.post("/api/appointments/book", (req, res) => {
   res.status(201).json(newAppointment);
 });
 
-app.get("/api/appointments/user", (req, res) => {
+app.get("/api/appointments/user", verifyToken, (req, res) => {
   res.json(appointments);
 });
 
@@ -128,6 +148,8 @@ app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
