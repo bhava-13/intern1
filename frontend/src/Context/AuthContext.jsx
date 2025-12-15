@@ -8,9 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+  
 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -21,24 +21,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // LOGIN USER
-  const loginUser = async (email, password) => {
-    const res = await api.post("/api/auth/login", {
-      email,
-      password,
-    });
+  const loginUser = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    
 
-    const loggedInUser = res.data.user;
-
- 
-    localStorage.setItem("user", JSON.stringify(loggedInUser));
-
-    setUser(loggedInUser);
+    setUser(userData);
     setIsAuthenticated(true);
-
-    return loggedInUser; 
   };
 
-  // REGISTER USER
   const registerUser = async (name, email, password) => {
     return await api.post("/api/auth/register", {
       name,
@@ -47,9 +37,9 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // LOGOUT USER
   const logoutUser = () => {
     localStorage.removeItem("user");
+   
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -62,11 +52,7 @@ export const AuthProvider = ({ children }) => {
     registerUser,
   };
 
-  if (initialLoading) return <p>Loading</p>;
+  if (initialLoading) return <p>Loading...</p>;
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

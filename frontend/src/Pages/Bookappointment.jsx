@@ -38,32 +38,49 @@ export default function BookAppointment() {
 
   const slots = useMemo(() => defaultSlots, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(null);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess(null);
 
-    if (!date) return setError("Please select a date.");
-    if (!slot) return setError("Please select a time slot.");
+  if (!date) return setError("Please select a date.");
+  if (!slot) return setError("Please select a time slot.");
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const response = await axios.post("https://doctor-appointment-system-backend-2ulw.onrender.com/api/appointments/book", {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("You must be logged in to book an appointment.");
+      setLoading(false);
+      return;
+    }
+
+    const response = await axios.post(
+      "https://doctor-appointment-system-backend-2ulw.onrender.com/api/appointments/book",
+      {
         doctorId,
         doctorName,
         date,
         slot,
-      });
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      setSuccess(response.data);
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Failed to book appointment");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setSuccess(response.data);
+  } catch (err) {
+    console.error(err);
+    setError(err.response?.data?.message || "Failed to book appointment");
+  } finally {
+    setLoading(false);
+  }
+};
+
   useEffect(() => {
   if (success) {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
